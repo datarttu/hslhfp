@@ -20,7 +20,9 @@ Imports:
     httr,
     tibble,
     magrittr,
-    dplyr
+    dplyr,
+    vroom,
+    R.utils
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

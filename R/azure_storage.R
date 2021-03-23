@@ -39,7 +39,8 @@ list_downloadable_by_date <- function(d, storage_url = Sys.getenv('AZURE_STORAGE
     local_path = file.path(target_dir, csv_name),
     full_url = sprintf('%s/%s/%s', storage_url, blob_prefix, csv_name)
   ) %>%
-    dplyr::mutate(local_file_exists = purrr::map_lgl(local_path, file.exists)) %>%
+    dplyr::mutate(local_file_exists = purrr::map_lgl(local_path, file.exists) |
+                    purrr::map_lgl(paste0(local_path, '.gz'), file.exists)) %>%
     dplyr::mutate(remote_file_exists = !(purrr::map_lgl(full_url, httr::http_error)))
 
   return(candidates)
@@ -100,8 +101,10 @@ download_blobs_by_date <- function(d, storage_url = Sys.getenv('AZURE_STORAGE_UR
     utils::download.file(url,
                          destfile = td$local_path[i],
                          quiet = TRUE)
+    message('Compressing ', td$local_path[i])
+    R.utils::gzip(td$local_path[i])
     dwnl_end <- Sys.time()
-    message('Downloaded ', td$local_path[i], ' (start ',
+    message(td$local_path[i], '.gz ready (start ',
             as.character(dwnl_start, format = '%Y-%m-%d %H:%M:%S%z'),
             '; end ',
             as.character(dwnl_start, format = '%Y-%m-%d %H:%M:%S%z'),
