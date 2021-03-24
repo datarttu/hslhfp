@@ -7,6 +7,7 @@
 #' @param d A Date or a string of format `YYYY-MM-DD`
 #' @param storage_url A storage URL string (defaults to env var `AZURE_STORAGE_URL`)
 #' @param blob_prefix A prefix defining a subset of blobs (defaults to `csv/VehiclePosition`)
+#' @param result_prefix A prefix to be added to the result file names (defaults to `vp`)
 #' @param target_dir Path to the target dir of downloaded files (defaults to env var `RAW_HFP_DIR`)
 #'
 #' @return A tibble containing remote and local dataset info.
@@ -15,6 +16,7 @@
 #' @examples
 list_downloadable_by_date <- function(d, storage_url = Sys.getenv('AZURE_STORAGE_URL'),
                                       blob_prefix = 'csv/VehiclePosition',
+                                      result_prefix = 'vp',
                                       target_dir = Sys.getenv('RAW_HFP_DIR')
 ) {
   assertthat::is.scalar(d)
@@ -35,7 +37,7 @@ list_downloadable_by_date <- function(d, storage_url = Sys.getenv('AZURE_STORAGE
 
   candidates <- tibble::tibble(
     date_hour_str = sprintf('%s-%02d', d, seq(0, 23, 1)),
-    csv_name = sprintf('%s.csv', date_hour_str),
+    csv_name = sprintf('%s_%s.csv', result_prefix, date_hour_str),
     local_path = file.path(target_dir, csv_name),
     full_url = sprintf('%s/%s/%s', storage_url, blob_prefix, csv_name)
   ) %>%
@@ -56,6 +58,7 @@ list_downloadable_by_date <- function(d, storage_url = Sys.getenv('AZURE_STORAGE
 #' @param d A Date or a string of format `YYYY-MM-DD`
 #' @param storage_url A storage URL string (defaults to env var `AZURE_STORAGE_URL`)
 #' @param blob_prefix A prefix defining a subset of blobs (defaults to `csv/VehiclePosition`)
+#' @param result_prefix A prefix to be added to the result file names (defaults to `vp`)
 #' @param target_dir Path to the target dir of downloaded files (defaults to env var `RAW_HFP_DIR`)
 #' @param verbose If `TRUE`, warn about missing or locally existing datasets and report downloads
 #'
@@ -64,6 +67,7 @@ list_downloadable_by_date <- function(d, storage_url = Sys.getenv('AZURE_STORAGE
 #' @examples
 download_blobs_by_date <- function(d, storage_url = Sys.getenv('AZURE_STORAGE_URL'),
                                    blob_prefix = 'csv/VehiclePosition',
+                                   result_prefix = 'vp',
                                    target_dir = Sys.getenv('RAW_HFP_DIR'),
                                    verbose = TRUE) {
   candidates <- list_downloadable_by_date(d, storage_url, blob_prefix, target_dir)
