@@ -19,3 +19,17 @@ test_that('Can read vp with default col names and spec', {
   }
   expect_silent(f())
 })
+
+test_that('Milliseconds are correctly cast to a timestamp', {
+  x <- milliseconds_to_timestamp(1600657201019)
+  expect_s3_class(x, 'POSIXct')
+  expect_equal(format(x, '%Y-%m-%d %H:%M:%OS3'),
+               '2020-09-21 03:00:01.019')
+})
+
+test_that('Milliseconds are correctly cast to a date', {
+  x <- milliseconds_to_date(1600646400000)
+  expect_s3_class(x, 'Date')
+  expect_equal(format(x, '%Y-%m-%d'),
+               '2020-09-21')
+})

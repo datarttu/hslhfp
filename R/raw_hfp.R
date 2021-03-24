@@ -113,3 +113,27 @@ raw_hfp_col_spec <- function() {
     )
   )
 }
+
+#' Cast UNIX epoch milliseconds to UTC datetime timestamp
+#'
+#' @param x A numeric vector of UTC milliseconds since 1970-01-01
+#'
+#' @return A `lubridate` date-time / POSIXct object
+#' @export
+milliseconds_to_timestamp <- function(x) {
+  x <- x / 1000.0
+  x <- lubridate::as_datetime(x, origin = lubridate::origin, tz = 'UTC')
+  return(x)
+}
+
+#' Cast UNIX epoch milliseconds to UTC date
+#'
+#' @param x A numeric vector of UTC milliseconds since 1970-01-01
+#'
+#' @return A Date object
+#' @export
+milliseconds_to_date <- function(x) {
+  x <- milliseconds_to_timestamp(x)
+  x <- lubridate::date(x)
+  return(x)
+}
