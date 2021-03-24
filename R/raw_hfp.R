@@ -121,6 +121,7 @@ raw_hfp_col_spec <- function() {
 #' @return A `lubridate` date-time / POSIXct object
 #' @export
 milliseconds_to_timestamp <- function(x) {
+  assertthat::assert_that(class(x) %in% c('numeric', 'integer'))
   x <- x / 1000.0
   x <- lubridate::as_datetime(x, origin = lubridate::origin, tz = 'UTC')
   return(x)

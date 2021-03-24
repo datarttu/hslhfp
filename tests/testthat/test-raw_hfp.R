@@ -34,6 +34,19 @@ test_that('Milliseconds are correctly cast to a date', {
                '2020-09-21')
 })
 
+test_that('Cannot cast object that is already a date or timestamp', {
+  x <- milliseconds_to_timestamp(1600646400000)
+  expect_error(milliseconds_to_timestamp(x))
+  x <- milliseconds_to_date(1600646400000)
+  expect_error(milliseconds_to_date(x))
+})
+
+test_that('Cannot cast non-numeric/int object to date or timestamp', {
+  x <- '1600646400000'
+  expect_error(milliseconds_to_timestamp(x))
+  expect_error(milliseconds_to_date(x))
+})
+
 infile <- file.path('testdata', 'vp_test.csv.gz')
 colnames <- raw_hfp_col_names()
 colspec <- raw_hfp_col_spec()
