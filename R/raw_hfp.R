@@ -137,3 +137,25 @@ milliseconds_to_date <- function(x) {
   x <- lubridate::date(x)
   return(x)
 }
+
+#' Cast UNIX milliseconds columns to date / timestamp
+#'
+#' @param x A data frame (of raw HFP data)
+#' @param ts_cols Chr names of columns to cast from ms to timestamp
+#' @param date_cols Chr names of columns to cast from ms to date
+#'
+#' @return A data frame
+#' @export
+cast_datetime_cols <- function(x,
+                               ts_cols = c('received_at', 'tst'),
+                               date_cols = c('oday')) {
+  ts_cols <- intersect(ts_cols, colnames(x))
+  if (length(ts_cols) > 0) {
+    x <- dplyr::mutate(x, dplyr::across({{ts_cols}}, milliseconds_to_timestamp))
+  }
+  date_cols <- intersect(date_cols, colnames(x))
+  if (length(date_cols) > 0) {
+    x <- dplyr::mutate(x, dplyr::across({{date_cols}}, milliseconds_to_date))
+  }
+  return(x)
+}

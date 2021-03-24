@@ -33,3 +33,22 @@ test_that('Milliseconds are correctly cast to a date', {
   expect_equal(format(x, '%Y-%m-%d'),
                '2020-09-21')
 })
+
+infile <- file.path('testdata', 'vp_test.csv.gz')
+colnames <- raw_hfp_col_names()
+colspec <- raw_hfp_col_spec()
+df <- vroom::vroom(infile, col_names = colnames, col_types = colspec)
+
+test_that('Timestamp and date columns are cast correctly', {
+  df <- cast_datetime_cols(df)
+  expect_s3_class(df$received_at, 'POSIXct')
+  expect_s3_class(df$tst, 'POSIXct')
+  expect_s3_class(df$oday, 'Date')
+})
+
+test_that('Data frame silently unchanged if no datetime columns present', {
+  df1 <- df %>%
+    dplyr::select(-received_at, -tst, -oday)
+  df2 <- cast_datetime_cols(df1)
+  expect_equal(df1, df2)
+})
