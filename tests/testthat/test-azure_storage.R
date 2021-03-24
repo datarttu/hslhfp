@@ -8,5 +8,5 @@ test_that("Type / format of d is checked", {
 })
 
 test_that("Existence of target directory is checked", {
-  expect_error(download_blobs_by_date(d = '2020-01-01', target_dir = '/foobarbaz'))
+  expect_warning(download_blobs_by_date(d = '2020-01-01', target_dir = '/foobarbaz'))
 })
