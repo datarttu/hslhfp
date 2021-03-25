@@ -8,6 +8,7 @@ list_downloadable_by_date(
   d,
   storage_url = Sys.getenv("AZURE_STORAGE_URL"),
   blob_prefix = "csv/VehiclePosition",
+  result_prefix = "vp",
   target_dir = Sys.getenv("RAW_HFP_DIR")
 )
 }
@@ -17,6 +18,8 @@ list_downloadable_by_date(
 \item{storage_url}{A storage URL string (defaults to env var \code{AZURE_STORAGE_URL})}
 
 \item{blob_prefix}{A prefix defining a subset of blobs (defaults to \code{csv/VehiclePosition})}
+
+\item{result_prefix}{A prefix to be added to the result file names (defaults to \code{vp})}
 
 \item{target_dir}{Path to the target dir of downloaded files (defaults to env var \code{RAW_HFP_DIR})}
 }

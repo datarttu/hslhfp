@@ -5,6 +5,7 @@
 #' The original csv datasets do not have column names.
 #'
 #' @return A character vector of column names
+#'
 #' @export
 raw_hfp_col_names <- function() {
   return(

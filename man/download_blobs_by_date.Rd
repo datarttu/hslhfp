@@ -8,6 +8,7 @@ download_blobs_by_date(
   d,
   storage_url = Sys.getenv("AZURE_STORAGE_URL"),
   blob_prefix = "csv/VehiclePosition",
+  result_prefix = "vp",
   target_dir = Sys.getenv("RAW_HFP_DIR"),
   verbose = TRUE
 )
@@ -19,12 +20,11 @@ download_blobs_by_date(
 
 \item{blob_prefix}{A prefix defining a subset of blobs (defaults to \code{csv/VehiclePosition})}
 
+\item{result_prefix}{A prefix to be added to the result file names (defaults to \code{vp})}
+
 \item{target_dir}{Path to the target dir of downloaded files (defaults to env var \code{RAW_HFP_DIR})}
 
 \item{verbose}{If \code{TRUE}, warn about missing or locally existing datasets and report downloads}
-}
-\value{
-
 }
 \description{
 HFP csv dumps are saved by date and hour in the HSL Azure blob storage.
