@@ -104,11 +104,14 @@ for (url in available_urls$full_url) {
   )
   tmessage(sprintf('%d lines read', nrow(raw_df)))
 
-  # TODO Route filter as script argument?
+  # TODO Route and event_type filters as script argument?
   res_df <- raw_df %>%
-    filter(route %in% c('1056', '1059'))
+    filter(route %in% c('1056', '1059')) %>%
+    filter(event_type %in% c('VP', 'DOO', 'DOC', 'PDE', 'ARS'))
 
-  # TODO NA odays and dirs should be filtered here
+  # TODO NA odays and dirs should be filtered here by validation function(s)
+  res_df <- res_df %>%
+    filter(!is.na(oday) & !is.na(dir))
 
   tmessage(sprintf('%d lines after filtering', nrow(res_df)))
 
