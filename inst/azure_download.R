@@ -108,6 +108,8 @@ for (url in available_urls$full_url) {
   res_df <- raw_df %>%
     filter(route %in% c('1056', '1059'))
 
+  # TODO NA odays and dirs should be filtered here
+
   tmessage(sprintf('%d lines after filtering', nrow(res_df)))
 
   res_df <- cast_datetime_cols(res_df)

@@ -37,7 +37,7 @@ datetimes_as_character <- function(x,
 #'
 #' @export
 hfp_vroom_write <- function(x, path, delim = ',', na = '',
-                            quote = 'all', progress = FALSE) {
+                            quote = 'needed', progress = FALSE) {
   append <- file.exists(path)
   vroom::vroom_write(x = x, path = path, delim = delim, na = na,
                      append = append, quote = quote, progress = FALSE)
