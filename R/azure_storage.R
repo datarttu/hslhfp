@@ -11,9 +11,8 @@
 #' @param target_dir Path to the target dir of downloaded files (defaults to env var `RAW_HFP_DIR`)
 #'
 #' @return A tibble containing remote and local dataset info.
-#' @export
 #'
-#' @examples
+#' @export
 list_downloadable_by_date <- function(d, storage_url = Sys.getenv('AZURE_STORAGE_URL'),
                                       blob_prefix = 'csv/VehiclePosition',
                                       result_prefix = 'vp',
@@ -63,8 +62,6 @@ list_downloadable_by_date <- function(d, storage_url = Sys.getenv('AZURE_STORAGE
 #' @param verbose If `TRUE`, warn about missing or locally existing datasets and report downloads
 #'
 #' @export
-#'
-#' @examples
 download_blobs_by_date <- function(d, storage_url = Sys.getenv('AZURE_STORAGE_URL'),
                                    blob_prefix = 'csv/VehiclePosition',
                                    result_prefix = 'vp',

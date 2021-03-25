@@ -5,6 +5,8 @@
 #' @param date_format Date format string for Date columns
 #'
 #' @return A data frame
+#'
+#' @export
 datetimes_as_character <- function(x,
                                    ts_format = '%Y-%m-%dT%H:%M:%OS3Z',
                                    date_format = '%Y-%m-%d') {
