@@ -25,17 +25,20 @@ datetimes_as_character <- function(x,
 
 #' Wrapper for `vroom::vroom_write` with custom default values
 #'
+#' If `path` already exists, new data is appended to the file,
+#' otherwise a new file with col names is created.
+#'
 #' @param x A data frame of HFP data
 #' @param path Path to write to
 #' @param delim Delimiter to use in result file
 #' @param na String used for missing values
-#' @param append Append to an existing file?
 #' @param quote Quote character columns ("needed", "all" or "none")
 #' @param progress Show progress bar
 #'
 #' @export
-hfp_vroom_write <- function(x, path, delim = ',', na = '', append = FALSE,
+hfp_vroom_write <- function(x, path, delim = ',', na = '',
                             quote = 'all', progress = FALSE) {
+  append <- file.exists(path)
   vroom::vroom_write(x = x, path = path, delim = delim, na = na,
                      append = append, quote = quote, progress = FALSE)
 }
