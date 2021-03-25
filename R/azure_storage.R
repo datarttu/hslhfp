@@ -39,7 +39,7 @@ list_downloadable_by_date <- function(d, storage_url = Sys.getenv('AZURE_STORAGE
     date_hour_str = sprintf('%s-%02d', d, seq(0, 23, 1)),
     csv_name = sprintf('%s_%s.csv', result_prefix, date_hour_str),
     local_path = file.path(target_dir, csv_name),
-    full_url = sprintf('%s/%s/%s', storage_url, blob_prefix, csv_name)
+    full_url = sprintf('%s/%s/%s.csv', storage_url, blob_prefix, date_hour_str)
   ) %>%
     dplyr::mutate(local_file_exists = purrr::map_lgl(local_path, file.exists) |
                     purrr::map_lgl(paste0(local_path, '.gz'), file.exists)) %>%
