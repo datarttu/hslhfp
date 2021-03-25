@@ -16,6 +16,7 @@ tmessage <- function(...) {
 suppressMessages(library(dplyr))
 suppressMessages(library(purrr))
 suppressMessages(library(vroom))
+suppressMessages(library(glue))
 suppressMessages(library(hslhfp))
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -71,7 +72,7 @@ col_spec <- cols_only(
   veh = col_integer(),
   oday = col_double(),
   start = col_character(),
-  stop = col_character(),
+  stop = col_integer(),
   tst = col_double(),
   tsi = col_double(),
   loc = col_character(),
@@ -83,11 +84,58 @@ col_spec <- cols_only(
   occu = col_integer()
 )
 
+# This is used for saving results by group into different files
+outfile_template <- file.path(target_hfp_dir, 'hfp_{oday}_{route}_{dir}.csv.gz')
+
 i <- 0
+
 for (url in available_urls$full_url) {
   i <- i + 1
   tmessage(sprintf('%d/%d %s ...',
                    i, n_urls, url))
-  Sys.sleep(0.5)
-}
 
+  # TODO For some reason routes with whitespace, e.g. "1006 3" are read incorrectly,
+  #      including everything after the comma
+  raw_df <- vroom(
+    file = url,
+    delim = ',',
+    col_names = raw_col_names,
+    col_types = col_spec
+  )
+  tmessage(sprintf('%d lines read', nrow(raw_df)))
+
+  # TODO Route filter as script argument?
+  res_df <- raw_df %>%
+    filter(route %in% c('1056', '1059'))
+
+  tmessage(sprintf('%d lines after filtering', nrow(res_df)))
+
+  res_df <- cast_datetime_cols(res_df)
+  res_df <- datetimes_as_character(res_df)
+
+  # TODO Reorder columns by col_spec inside a function
+  res_df <- res_df %>%
+    select(names(col_spec$cols))
+
+  # TODO Rethink this pipeline & make into function,
+  #      currently it causes vroom::problems() warnings
+  res_df <- res_df %>%
+    group_by(route, dir, oday)
+
+  # TODO Stop if group keys do not match the variables in the template.
+  #      Or take the keys from the template,
+  #      and stop in the beginning if a key column is not in the col_spec?
+  grp_df <- group_keys(res_df) %>%
+    mutate(outfile = glue(outfile_template))
+  res_list <- group_split(res_df) %>%
+    setNames(grp_df$outfile)
+  res_split <- tibble(path = names(res_list),
+                      x = res_list)
+
+  # TODO: Return df of filename & append==TRUE/FALSE
+  #       so newly written / appended files can be reported along the way.
+  pwalk(res_split, hfp_vroom_write)
+
+  tmessage(sprintf('%d files written or appended to', nrow(res_split)))
+
+}
