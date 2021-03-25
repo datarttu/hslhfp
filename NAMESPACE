@@ -2,6 +2,7 @@
 
 export("%>%")
 export(cast_datetime_cols)
+export(datetimes_as_character)
 export(download_blobs_by_date)
 export(hfp_vroom_write)
 export(list_downloadable_by_date)
