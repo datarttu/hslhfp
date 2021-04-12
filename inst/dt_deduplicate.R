@@ -19,10 +19,8 @@ if (length(args) == 0) {
   stop('Usage: ./dt_deduplicate.R <input_file> [<output_file>]')
 }
 INPUT_FILE <- args[1]
-# INPUT_FILE <- '/home/keripukki/dataa/sujuiko/hfp_tidy/hfp_1500_1_2020-09-23.csv.gz'
 stopifnot(file.exists(INPUT_FILE))
 OUTPUT_FILE <- ifelse(length(args) > 1, args[2], INPUT_FILE)
-# OUTPUT_FILE <- '/home/keripukki/dataa/sujuiko/hfp_tidy/dedup_1500_1_2020-09-23.csv.gz'
 
 tmessage <- function(...) {
   message('[', Sys.time(), ']; deduplicate; ', ...)
