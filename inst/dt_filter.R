@@ -28,7 +28,7 @@ stopifnot('R.utils' %in% installed.packages())
 
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) == 0) {
-  stop('Usage: ./dt_deduplicate.R <input_dir> [<output_dir>]')
+  stop('Usage: ./dt_filter.R <input_dir> [<output_dir>]')
 }
 INPUT_DIR <- args[1]
 stopifnot(dir.exists(INPUT_DIR))
