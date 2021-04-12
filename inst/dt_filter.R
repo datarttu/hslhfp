@@ -36,7 +36,7 @@ OUTPUT_DIR <- ifelse(length(args) > 1, args[2], INPUT_DIR)
 stopifnot(dir.exists(OUTPUT_DIR))
 
 tmessage <- function(...) {
-  message('[', Sys.time(), ']; filter is_ongoing; ', ...)
+  message('[', Sys.time(), ']; filter rows; ', ...)
 }
 
 filter_file <- function(infile, outfile) {
