@@ -31,7 +31,7 @@ tmessage <- function(...) {
 deduplicate_file <- function(infile, outfile, file_seq = NA, total_files = NA) {
   progmeter <- ifelse(
     !is.na(file_seq) & !is.na(total_files),
-    sprintf('%04d/%d', file_seq, total_files),
+    sprintf('%04d/%d; ', file_seq, total_files),
     ''
   )
   dt <- fread(file = infile)
@@ -39,8 +39,8 @@ deduplicate_file <- function(infile, outfile, file_seq = NA, total_files = NA) {
   if (nrow_orig == 0) {
     tmessage(
       sprintf(
-        '%d/%d; no rows in %s, skipping',
-        file_seq, total_files, infile
+        '%sno rows in %s, skipping',
+        progmeter, infile
       )
     )
     return()
@@ -56,7 +56,7 @@ deduplicate_file <- function(infile, outfile, file_seq = NA, total_files = NA) {
 
   tmessage(
     sprintf(
-      '%s; %d duplicates removed from %s and %d rows saved to %s',
+      '%s%d duplicates removed from %s and %d rows saved to %s',
       progmeter, n_duplicated, infile, nrow_dedup, outfile
     )
   )
