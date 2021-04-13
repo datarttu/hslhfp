@@ -10,9 +10,6 @@
 #'  - lat and long coordinates must be within a reasonable HSL bounging box
 #'    and not NA
 #'
-#' Unlike dt_deduplicate.R, here we process all the .csv.gz files
-#' in a directory in the same R process.
-#'
 #' Usage: either
 #' > ./dt_filter.R <input_dir> <output_dir>
 #' OR
@@ -36,20 +33,37 @@ OUTPUT_DIR <- ifelse(length(args) > 1, args[2], INPUT_DIR)
 stopifnot(dir.exists(OUTPUT_DIR))
 
 tmessage <- function(...) {
-  message('[', Sys.time(), ']; filter rows; ', ...)
+  message('[', Sys.time(), ']; filter; ', ...)
 }
 
-filter_file <- function(infile, outfile) {
+filter_file <- function(infile, outfile, file_seq = NA, total_files = NA) {
+  progmeter <- ifelse(
+    !is.na(file_seq) & !is.na(total_files),
+    sprintf('%04d/%d; ', file_seq, total_files),
+    ''
+  )
   dt <- fread(file = infile)
   nrow_orig <- nrow(dt)
-  tmessage(infile, ' read')
-  tmessage(nrow_orig, ' original rows')
+  if (nrow_orig == 0) {
+    tmessage(
+      sprintf(
+        '%sno rows in %s, skipping',
+        progmeter, infile
+      )
+    )
+    return()
+  }
+
+  #' FIXME: a temporary solution to shortening dataset labeling in logs...
+  dataset_name <- unique(dt[, .(route, dir, oday)])[1, ]
+  dataset_name$oday <- format(dataset_name$oday, '%Y-%m-%d')
+  dataset_name <- paste0(dataset_name, collapse = '_')
 
   #' First, get rid of non-service observations
   #' (this is not a validation error case)
   dt <- dt[is_ongoing == TRUE, ]
   dt <- dt[, is_ongoing := NULL]
-  tmessage(nrow(dt), ' rows with is_ongoing == TRUE kept, is_ongoing column dropped')
+  nrow_ongoing <- nrow(dt)
 
   #' Validation filters
   dt[, errors := '']
@@ -71,37 +85,43 @@ filter_file <- function(infile, outfile) {
       paste0(err_combos$errors, ': ', err_combos$N),
       collapse = ', '
     )
-    tmessage(n_err_rows, ' rows with errors to drop. ', err_combos)
+    err_info <- sprintf('%d / %d (%.2f %%) rows with errors dropped. (%s)',
+                        n_err_rows, nrow_ongoing, n_err_rows / nrow_ongoing, err_combos)
     dt <- dt[nchar(errors) == 0, ]
+  } else {
+    err_info <- 'No rows with errors dropped'
   }
   dt[, errors := NULL]
 
   fwrite(x = dt, file = outfile)
-  tmessage(nrow(dt), ' rows written to ', outfile)
+  tmessage(
+    sprintf(
+      '%s%s; %d / %d (%.2f %%) is_ongoing == FALSE rows dropped. %s. %d rows saved.',
+      progmeter, dataset_name,
+      nrow_orig - nrow_ongoing, nrow_orig, (nrow_orig - nrow_ongoing) / nrow_orig,
+      err_info, nrow(dt)
+    )
+  )
 }
 
 file_paths <- data.frame(
-  infile_path = list.files(path = INPUT_DIR, pattern = '*.csv.gz',
-                           full.names = TRUE),
+  infile = list.files(path = INPUT_DIR, pattern = '*.csv.gz',
+                      full.names = TRUE),
   stringsAsFactors = FALSE
 )
-file_paths$outfile_path <- gsub(
+file_paths$outfile <- gsub(
   pattern = INPUT_DIR,
   replacement = OUTPUT_DIR,
-  x = file_paths$infile_path
+  x = file_paths$infile
 )
-
-if (nrow(file_paths) == 0) {
-  stop('No files to filter, exiting',
-       call. = FALSE)
-}
+file_paths$file_seq <- seq_along(file_paths$infile)
+file_paths$total_files <- nrow(file_paths)
 
 tmessage('Starting row filtering for ',
          nrow(file_paths),
          ' files')
 
-foo <- purrr::walk2(.x = file_paths$infile_path,
-                    .y = file_paths$outfile_path,
+foo <- purrr::pwalk(.l = file_paths,
                     .f = filter_file)
 
 tmessage('All files filtered')
