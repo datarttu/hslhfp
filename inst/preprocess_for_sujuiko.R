@@ -46,8 +46,6 @@ OUTPUT_JRN_PATH <- file.path(output_dir, sprintf('jrn_%s.csv.gz', INPUT_HFP_NAME
 OUTPUT_OBS_PATH <- file.path(output_dir, sprintf('obs_%s.csv.gz', INPUT_HFP_NAME))
 OUTPUT_LOG_PATH <- file.path(output_dir, sprintf('log_%s.csv.gz', INPUT_HFP_NAME))
 
-message(OUTPUT_JRN_PATH)
-
 # Parameters ----
 
 #' We have several parameters for filtering & validation
