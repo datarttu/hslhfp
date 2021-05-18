@@ -98,7 +98,7 @@ DRST_INVERT_THRESHOLD_PROPORTION <- 0.5
 
 # Define logging logic ----
 logdt <- data.table(
-  dataset_name = INPUT_HFP_PATH,
+  dataset_name = INPUT_HFP_NAME,
   log_timestamp = Sys.time(),
   action = 'Start processing',
   jrnid = NA_character_,
