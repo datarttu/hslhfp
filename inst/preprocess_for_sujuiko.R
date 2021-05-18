@@ -20,15 +20,12 @@ INPUT_HFP_NAME <- '2510_1_2020-10-07'
 INPUT_HFP_PATH <- file.path(Sys.getenv('TARGET_HFP_DIR'),
                             'raw',
                             sprintf('hfp_%s.csv.gz', INPUT_HFP_NAME))
-OUTPUT_JRN_PATH <- file.path(Sys.getenv('TARGET_HFP_DIR'),
-                             'final',
-                             sprintf('jrn_%s.csv.gz', INPUT_HFP_NAME))
-OUTPUT_OBS_PATH <- file.path(Sys.getenv('TARGET_HFP_DIR'),
-                             'final',
-                             sprintf('obs_%s.csv.gz', INPUT_HFP_NAME))
-OUTPUT_LOG_PATH <- file.path(Sys.getenv('TARGET_HFP_DIR'),
-                             'final',
-                             sprintf('log_%s.csv.gz', INPUT_HFP_NAME))
+stopifnot(file.exists(INPUT_HFP_PATH))
+output_dir <- file.path(Sys.getenv('TARGET_HFP_DIR'), 'final')
+stopifnot(dir.exists(output_dir))
+OUTPUT_JRN_PATH <- file.path(output_dir, sprintf('jrn_%s.csv.gz', INPUT_HFP_NAME))
+OUTPUT_OBS_PATH <- file.path(output_dir, sprintf('obs_%s.csv.gz', INPUT_HFP_NAME))
+OUTPUT_LOG_PATH <- file.path(output_dir, sprintf('log_%s.csv.gz', INPUT_HFP_NAME))
 
 message(OUTPUT_JRN_PATH)
 
