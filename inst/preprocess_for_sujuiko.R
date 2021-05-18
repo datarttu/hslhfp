@@ -1,6 +1,7 @@
 #' Preprocessing of a HFP dataset for the sujuiko model
 #'
-#' - Reads a file like hfp_{route}_{dir}_{oday}.csv.gz
+#' - Reads a HFP dataset name as command line argument, like
+#'   {route}_{dir}_{oday}
 #' - Normalizes and filters the data so only valid journeys and observations
 #'   can be imported to the database
 #' - Writes three files:
@@ -13,10 +14,28 @@ library(data.table)
 library(sf)
 library(Rcpp)
 library(digest)
+library(stringr)
+
+validate_hfp_name <- function(x) {
+  x <- str_split_fixed(x, '_', n = 3)
+  return(
+    # Route part of right length (should also check for alphanum + space only)
+    str_length(x[, 1]) > 3 &
+      str_length(x[, 1]) < 7 &
+      # Dir part exactly 1 or 2
+      (x[, 2] == '1' | x[, 2] == '2') &
+      # Date part is of right length and format (date parts not checked...)
+      str_length(x[, 3]) == 10 &
+      str_detect(x[, 3], '[0-9]{4}-[0-9]{2}-[0-9]{2}')
+  )
+}
+
+args <- commandArgs(trailingOnly = TRUE)
+INPUT_HFP_NAME <- args[1]
+stopifnot(validate_hfp_name(INPUT_HFP_NAME))
 
 # In-out file paths ----
 
-INPUT_HFP_NAME <- '2510_1_2020-10-07'
 INPUT_HFP_PATH <- file.path(Sys.getenv('TARGET_HFP_DIR'),
                             'raw',
                             sprintf('hfp_%s.csv.gz', INPUT_HFP_NAME))
